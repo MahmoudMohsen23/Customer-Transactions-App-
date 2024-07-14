@@ -1,22 +1,22 @@
-let customers = []
-let transactions = []
+let customers = [];
+let transactions = [];
+let chartInstance; 
+
 async function getData() {
     let api = await fetch(`data.json`);
     let data = await api.json();
-    console.log(data);
+    console.log("Fetched Data:", data);
     customers = data.customers;
     transactions = data.transactions;
     displayData(customers, transactions);
-    createGraph(transactions)
+    createGraph(transactions, null);
 }
 getData();
 
 function displayData(customers, transactions) {
     let cartona = ``;
     for (let i = 0; i < transactions.length; i++) {
-
         for (let j = 0; j < customers.length; j++) {
-
             if (customers[j].id === transactions[i].customer_id) {
                 cartona += `<tr>
                             <td id="name">${customers[j].name}</td>
@@ -28,25 +28,22 @@ function displayData(customers, transactions) {
             }
         }
     }
-
     document.getElementById('body').innerHTML = cartona;
 }
 
 function searchByName() {
-    term = document.getElementById('filterName').value.toLowerCase()
-    searchContainer = [];
+    const term = document.getElementById('filterName').value.toLowerCase();
+    const searchContainer = [];
     for (let j = 0; j < customers.length; j++) {
         if (customers[j].name.toLowerCase().includes(term)) {
-            searchContainer.push(customers[j])
+            searchContainer.push(customers[j]);
         }
-
     }
-
-    displayData(searchContainer, transactions)
+    displayData(searchContainer, transactions);
+    updateGraph(searchContainer, transactions);
 }
 
-document.getElementById('filterName').addEventListener('input', searchByName)
-
+document.getElementById('filterName').addEventListener('input', searchByName);
 
 function searchByAmount() {
     const term = parseFloat(document.getElementById('filterAmount').value);
@@ -56,23 +53,37 @@ function searchByAmount() {
             searchContainer.push(transactions[i]);
         }
     }
-
     displayData(customers, searchContainer);
+    updateGraph(customers, searchContainer);
 }
 
 document.getElementById('filterAmount').addEventListener('input', searchByAmount);
 
-
-
-
-
-function createGraph(transactions) {
+function createGraph(transactions, selectedCustomerId) {
     const ctx = document.getElementById('transactionGraph').getContext('2d');
+    let filteredTransactions = transactions;
+    if (selectedCustomerId) {
+        filteredTransactions = transactions.filter(transaction => transaction.customer_id == selectedCustomerId);
+    }
 
-    const labels = customers.map(customer => customer.name);
-    const data = transactions.map(transaction => transaction.amount);
+    
+    const transactionMap = filteredTransactions.reduce((acc, transaction) => {
+        acc[transaction.date] = (acc[transaction.date] || 0) + transaction.amount;
+        return acc;
+    }, {});
 
-    new Chart(ctx, {
+    const labels = Object.keys(transactionMap);
+    const data = Object.values(transactionMap);
+
+    console.log("Graph Data:", { labels, data });
+
+    
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    
+    chartInstance = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
@@ -92,4 +103,9 @@ function createGraph(transactions) {
             }
         }
     });
+}
+
+function updateGraph(filteredCustomers, filteredTransactions) {
+    const selectedCustomerId = filteredCustomers.length === 1 ? filteredCustomers[0].id : null;
+    createGraph(filteredTransactions, selectedCustomerId);
 }
