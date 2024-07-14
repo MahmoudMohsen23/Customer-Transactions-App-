@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Transactions App</title>
+    <!-- ^---GOOGLE FONTS LINK--- -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=PT+Sans+Caption:wght@400;700&display=swap" rel="stylesheet">
+    <!-- *---BOOTSTRAP LINK--- -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+
+    <!-- *---CSS MAIN FILE--- -->
+    <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+
+<body>
+    <section class="py-5">
+        <div class="container position-relative text-center">
+            <h1 class="position-relative">Customer Transactions</h1>
+            <div class="row d-flex">
+                <div class="col-md-6">
+
+                    <input type="text" class="form-control w-50 ms-auto" placeholder="Search By Customer Name"
+                        id="filterName">
+                </div>
+
+                <div class="col-md-6">
+
+                    <input type="number" class="form-control w-50 me-auto" placeholder="Search By Amount"
+                        id="filterAmount">
+                </div>
+            </div>
+
+            <table class="mt-4 w-75 mx-auto bg-white" id="transactionsTable">
+                <thead>
+                    <tr>
+                        <th>Customer Name</th>
+                        <th>Customer ID</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="body">
+                </tbody>
+            </table>
+            <div class="graph-container w-75  mx-auto mt-5">
+                <canvas id="transactionGraph"></canvas>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+</html>
